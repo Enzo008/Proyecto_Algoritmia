@@ -1,0 +1,454 @@
+package cibertec;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.Font;
+
+public class DialogoReportes extends JDialog implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final JPanel contentPanel = new JPanel();
+	private JButton btnCerrar;
+	private JTextArea txtS;
+	private JScrollPane scrollPane;
+	private JComboBox<String> cboCodigo;
+	private JLabel lblReporte;
+
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Throwable e) {
+			e.printStackTrace();
+		}
+		try {
+			DialogoReportes dialog = new DialogoReportes();
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create the dialog.
+	 */
+	public DialogoReportes() {
+		setAutoRequestFocus(false);
+		setModal(true);
+		setTitle("Genrar Reportes");
+		setBounds(100, 100, 682, 312);
+		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(null);
+		
+		lblReporte = new JLabel("Tipos de Reporte");
+		lblReporte.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblReporte.setBounds(10, 13, 98, 14);
+		contentPanel.add(lblReporte);
+		
+		cboCodigo = new JComboBox<String>();
+		cboCodigo.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		cboCodigo.addActionListener(this);
+		cboCodigo.setModel(new DefaultComboBoxModel<String>(new String[] {"Ventas por modelo", "Ventas en relaci\u00F3n \u00F3ptima de unidades vendidas", "Precios en relaci\u00F3n al precio promedio", "Promedios, menores y mayores"}));
+		cboCodigo.setBounds(118, 10, 390, 22);
+		contentPanel.add(cboCodigo);
+		
+		btnCerrar = new JButton("Cerrar");
+		btnCerrar.addActionListener(this);
+		btnCerrar.setBounds(567, 11, 89, 23);
+		contentPanel.add(btnCerrar);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 44, 646, 221);
+		contentPanel.add(scrollPane);
+		
+		txtS = new JTextArea();
+		txtS.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		txtS.setEditable(false);
+		scrollPane.setViewportView(txtS);
+		
+		ventasPorModelo(aporteCuota0(), aporteCuota1(), aporteCuota2(), aporteCuota3(), aporteCuota4());
+	}
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnCerrar) {
+			actionPerformedBtnCerrar(e);
+		}
+		if (e.getSource() == cboCodigo) {
+			actionPerformedCboCodigo(e);
+		}
+	}
+	
+	protected void actionPerformedBtnCerrar(ActionEvent e) {
+		dispose();
+	}
+	
+	void imprimir(String cad) {
+		txtS.append(cad + "\n");
+	}
+	
+	protected void actionPerformedCboCodigo(ActionEvent e) {
+		int cod=cboCodigo.getSelectedIndex();
+		//CASE 0
+		double aCuo0,aCuo1,aCuo2,aCuo3,aCuo4;
+		aCuo0=aporteCuota0();
+		aCuo1=aporteCuota1();
+		aCuo2=aporteCuota2();
+		aCuo3=aporteCuota3();
+		aCuo4=aporteCuota4();
+		//CASE 1
+		int dif0=0,dif1=0,dif2=0,dif3=0,dif4=0;
+		String imp0,imp1,imp2,imp3,imp4;
+		imp0=cantidadOptima0(dif0);
+		imp1=cantidadOptima1(dif1);
+		imp2=cantidadOptima2(dif2);
+		imp3=cantidadOptima3(dif3);
+		imp4=cantidadOptima4(dif4);
+		//CASE 2
+		double prom=(Tienda.precio0+Tienda.precio1+Tienda.precio2+Tienda.precio3+Tienda.precio4)/5;
+		String pre0,pre1,pre2,pre3,pre4;
+		pre0=promedioPrecio0(prom);
+		pre1=promedioPrecio1(prom);
+		pre2=promedioPrecio2(prom);
+		pre3=promedioPrecio3(prom);
+		pre4=promedioPrecio4(prom);
+		//DEFAULT
+		double preMen,preMay,anMen,anMay,fonMen,fonMay,alMen,alMay,capMen,capMay;
+		preMen=precioMenor();
+		preMay=precioMayor();
+		anMen=AnchoMenor();
+		anMay=AnchoMayor();
+		fonMen=FondoMenor();
+		fonMay=FondoMayor();
+		alMen=AltoMenor();
+		alMay=AltoMayor();
+		capMen=CapacidadMenor();
+		capMay=CapacidadMayor();
+		//CASOS
+		switch(cod) {
+		case 0:
+			ventasPorModelo(aCuo0, aCuo1, aCuo2, aCuo3, aCuo4);
+			break;
+		case 1:
+			ventasRelacionOptima(imp0, imp1, imp2, imp3, imp4);
+			break;
+		case 2:
+			preciosRelacionPromedio(pre0, pre1, pre2, pre3, pre4);
+			break;
+		default:
+			promedioMenoresMayores(prom, preMen, preMay, anMen, anMay, fonMen, fonMay, alMen, alMay, capMen, capMay);
+		}
+	}
+	//------------CASE-0-------------
+	void ventasPorModelo(double a0,double a1,double a2,double a3,double a4) {
+		txtS.setText("VENTAS POR MODELO:\n\n");
+		imprimir("Modelo                        : "+Tienda.modelo0);
+		imprimir("Cantidad de ventas            : "+DialogoVender.acumVentas0);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant0);
+		imprimir("Importe total vendido         : S/."+DialogoVender.acumIpag0);
+		imprimir("Aporte de la cuota diaria     : "+a0+"%\n");
+
+		imprimir("Modelo                        : "+Tienda.modelo1);
+		imprimir("Cantidad de ventas            : "+DialogoVender.acumVentas1);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant1);
+		imprimir("Importe total vendido         : S/."+DialogoVender.acumIpag1);
+		imprimir("Aporte de la cuota diaria     : "+a1+"%\n");
+		
+		imprimir("Modelo                        : "+Tienda.modelo2);
+		imprimir("Cantidad de ventas            : "+DialogoVender.acumVentas2);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant2);
+		imprimir("Importe total vendido         : S/."+DialogoVender.acumIpag2);
+		imprimir("Aporte de la cuota diaria     : "+a2+"%\n");
+		
+		imprimir("Modelo                        : "+Tienda.modelo3);
+		imprimir("Cantidad de ventas            : "+DialogoVender.acumVentas3);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant3);
+		imprimir("Importe total vendido         : S/."+DialogoVender.acumIpag3);
+		imprimir("Aporte de la cuota diaria     : "+a3+"%\n");
+		
+		imprimir("Modelo                        : "+Tienda.modelo4);
+		imprimir("Cantidad de ventas            : "+DialogoVender.acumVentas4);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant4);
+		imprimir("Importe total vendido         : S/."+DialogoVender.acumIpag4);
+		imprimir("Aporte de la cuota diaria     : "+a4+"%");
+	}
+	double aporteCuota0() {
+		return DialogoVender.acumIpag0/30000*100;
+	}
+	double aporteCuota1() {
+		return DialogoVender.acumIpag1/30000*100;
+	}
+	double aporteCuota2() {
+		return DialogoVender.acumIpag2/30000*100;
+	}
+	double aporteCuota3() {
+		return DialogoVender.acumIpag3/30000*100;
+	}
+	double aporteCuota4() {
+		return DialogoVender.acumIpag4/30000*100;
+	}
+	//------------CASE-1-------------
+	//Calculo Ventas Relacion Optima
+	String cantidadOptima0(int d0) {
+			if(DialogoVender.acumCant0>Tienda.cantidadOptima) {
+				d0=DialogoVender.acumCant0-Tienda.cantidadOptima;
+				return "("+d0+" más que la cantidad óptima";
+			}else {
+				d0=Tienda.cantidadOptima-DialogoVender.acumCant0;
+				return "("+d0+" menos que la cantidad óptima)";
+			}
+		}
+	String cantidadOptima1(int d1) {	
+			if(DialogoVender.acumCant1>Tienda.cantidadOptima) {
+				d1=DialogoVender.acumCant1-Tienda.cantidadOptima;
+				return "("+d1+" más que la cantidad óptima";
+			}else {
+				d1=Tienda.cantidadOptima-DialogoVender.acumCant1;
+				return "("+d1+" menos que la cantidad óptima)";
+			}
+		}
+	String cantidadOptima2(int d2) {	
+			if(DialogoVender.acumCant2>Tienda.cantidadOptima) {
+				d2=DialogoVender.acumCant2-Tienda.cantidadOptima;
+				return "("+d2+" más que la cantidad óptima";
+			}else {
+				d2=Tienda.cantidadOptima-DialogoVender.acumCant2;
+				return"("+d2+" menos que la cantidad óptima)";
+			}
+		}
+	String cantidadOptima3(int d3) {
+			if(DialogoVender.acumCant3>Tienda.cantidadOptima) {
+				d3=DialogoVender.acumCant3-Tienda.cantidadOptima;
+				return"("+d3+" más que la cantidad óptima";
+			}else {
+				d3=Tienda.cantidadOptima-DialogoVender.acumCant3;
+				return "("+d3+" menos que la cantidad óptima)";
+			}
+		}
+	String cantidadOptima4(int d4) {
+			if(DialogoVender.acumCant4>Tienda.cantidadOptima) {
+				d4=DialogoVender.acumCant4-Tienda.cantidadOptima;
+				return "("+d4+" más que la cantidad óptima";
+			}else {
+				d4=Tienda.cantidadOptima-DialogoVender.acumCant4;
+				return "("+d4+" menos que la cantidad óptima)";
+			}
+		}
+	void ventasRelacionOptima(String imp0,String imp1,String imp2,String imp3,String imp4) {
+		txtS.setText("VENTAS EN RELACIÓN A LA CANTIDAD ÓPTIMA DE UNIDADES VENDIDAS\n\n");
+		imprimir("Modelo                        : "+Tienda.modelo0);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant0+imp0+"\n");
+		
+		imprimir("Modelo                        : "+Tienda.modelo1);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant1+imp1+"\n");
+		
+		imprimir("Modelo                        : "+Tienda.modelo2);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant2+imp2+"\n");
+		
+		imprimir("Modelo                        : "+Tienda.modelo3);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant1+imp3+"\n");
+		
+		imprimir("Modelo                        : "+Tienda.modelo4);
+		imprimir("Cantidad de unidades vendidas : "+DialogoVender.acumCant4+imp4);
+	}
+	//------------CASE-2-------------
+	String promedioPrecio0(double p) {
+		if(p>Tienda.precio0) {return "(Menor al Promedio)";}
+		else if(p<Tienda.precio0) {return "(Mayor al Promedio)";}
+		else{return "(Igual al Promedio)";}
+	}
+	String promedioPrecio1(double p) {
+		if(p>Tienda.precio1) {return "(Menor al Promedio)";}
+		else if(p<Tienda.precio1) {return "(Mayor al Promedio)";}
+		else{return "(Igual al Promedio)";}
+	}
+	String promedioPrecio2(double p) {
+		if(p>Tienda.precio2) {return "(Menor al Promedio)";}
+		else if(p<Tienda.precio2) {return "(Mayor al Promedio)";}
+		else{return "(Igual al Promedio)";}
+	}
+	String promedioPrecio3(double p) {
+		if(p>Tienda.precio3) {return "(Menor al Promedio)";}
+		else if(p<Tienda.precio3) {return "(Mayor al Promedio)";}
+		else{return "(Igual al Promedio)";}
+	}
+	String promedioPrecio4(double p) {
+		if(p>Tienda.precio4) {return "(Menor al Promedio)";}
+		else if(p<Tienda.precio4) {return "(Mayor al Promedio)";}
+		else{return "(Igual al Promedio)";}
+	}
+	void preciosRelacionPromedio(String p0,String p1,String p2,String p3,String p4) {
+		txtS.setText("PRECIOS EN RELACIÓN AL PRECIO PROMEDIO\n\n");
+		imprimir("Modelo : "+Tienda.modelo0);
+		imprimir("Precio : S/. "+Tienda.precio0+p0+"\n");
+		
+		imprimir("Modelo : "+Tienda.modelo1);
+		imprimir("Precio : S/. "+Tienda.precio1+p1+"\n");
+		
+		imprimir("Modelo : "+Tienda.modelo2);
+		imprimir("Precio : S/. "+Tienda.precio2+p2+"\n");
+		
+		imprimir("Modelo : "+Tienda.modelo3);
+		imprimir("Precio : S/. "+Tienda.precio3+p3+"\n");
+	
+		imprimir("Modelo : "+Tienda.modelo4);
+		imprimir("Precio : S/. "+Tienda.precio4+p4);
+	}	
+	//------------DEFAULT-------------
+	void promedioMenoresMayores(double pProm, double pMe,double pMa, double anMe,double anMa, double fMe,double fMa, double alMe,double alMa, double cMe,double cMa) {
+		txtS.setText("PROMEDIOS, MENORES Y MAYORES\n\n");
+		imprimir("Precio promedio    : S/. "+pProm);
+		imprimir("Precio menor       : S/. "+pMe);
+		imprimir("Precio mayor       : S/. "+pMa+"\n");
+		
+		imprimir("Ancho promedio     : "+((Tienda.ancho0+Tienda.ancho1+Tienda.ancho2+Tienda.ancho3+Tienda.ancho4)/5)+" cm");
+		imprimir("Ancho menor        : "+anMe+"cm");
+		imprimir("Ancho mayor        : "+anMa+"cm\n");
+		
+		imprimir("Fondo promedio     : "+((Tienda.fondo0+Tienda.fondo1+Tienda.fondo2+Tienda.fondo3+Tienda.fondo4)/5)+" cm");
+		imprimir("Fondo menor        : "+fMe+"cm");
+		imprimir("Fondo mayor        : "+fMa+"cm\n");
+		
+		imprimir("Alto promedio      : "+((Tienda.alto0+Tienda.alto1+Tienda.alto2+Tienda.alto3+Tienda.alto4)/5)+" cm");
+		imprimir("Alto menor         : "+alMe+"cm");
+		imprimir("Alto mayor         : "+alMa+"cm\n");
+		
+		imprimir("Capacidad promedio : "+((Tienda.capacidad0+Tienda.capacidad1+Tienda.capacidad2+Tienda.capacidad3+Tienda.capacidad4)/5)+" cm");
+		imprimir("Capacidad menor    : "+cMe+"cm");
+		imprimir("Capacidad mayor    : "+cMa+"cm");
+	}
+	double precioMenor() {
+		if(Tienda.precio0<Tienda.precio1 && Tienda.precio0<Tienda.precio2 && 
+		Tienda.precio0<Tienda.precio3 && Tienda.precio0<Tienda.precio4) {return Tienda.precio0;}
+		else if(Tienda.precio1<Tienda.precio0 && Tienda.precio1<Tienda.precio2 && 
+		Tienda.precio1<Tienda.precio3 && Tienda.precio1<Tienda.precio4) {return Tienda.precio1;}
+		else if(Tienda.precio2<Tienda.precio0 && Tienda.precio2<Tienda.precio1 && 
+		Tienda.precio2<Tienda.precio3 && Tienda.precio2<Tienda.precio4) {return Tienda.precio2;}
+		else if(Tienda.precio3<Tienda.precio0 && Tienda.precio3<Tienda.precio1 && 
+		Tienda.precio3<Tienda.precio2 && Tienda.precio3<Tienda.precio4) {return Tienda.precio3;}
+		else {return Tienda.precio4;}
+	}
+	double precioMayor() {
+		if(Tienda.precio0>Tienda.precio1 && Tienda.precio0>Tienda.precio2 && 
+		Tienda.precio0>Tienda.precio3 && Tienda.precio0>Tienda.precio4) {return Tienda.precio0;	}
+		else if(Tienda.precio1>Tienda.precio0 && Tienda.precio1>Tienda.precio2 &&
+		Tienda.precio1>Tienda.precio3 && Tienda.precio1>Tienda.precio4) {return Tienda.precio1;}
+		else if(Tienda.precio2>Tienda.precio0 && Tienda.precio2>Tienda.precio1 && 
+		Tienda.precio2>Tienda.precio3 && Tienda.precio2>Tienda.precio4) {return Tienda.precio2;}
+		else if(Tienda.precio3>Tienda.precio0 && Tienda.precio3>Tienda.precio1 && 
+		Tienda.precio3>Tienda.precio2 && Tienda.precio3>Tienda.precio4) {return Tienda.precio3;}
+		else {return Tienda.precio4;}
+	}
+	double AnchoMenor() {
+		if(Tienda.ancho0<Tienda.ancho1 && Tienda.ancho0<Tienda.ancho2 && 
+		Tienda.ancho0<Tienda.ancho3 && Tienda.ancho0<Tienda.ancho4) {return Tienda.ancho0;}
+		else if(Tienda.ancho1<Tienda.ancho0 && Tienda.ancho1<Tienda.ancho2 && 
+		Tienda.ancho1<Tienda.ancho3 && Tienda.ancho1<Tienda.ancho4) {return Tienda.ancho1;}
+		else if(Tienda.ancho2<Tienda.ancho0 && Tienda.ancho2<Tienda.ancho1 && 
+		Tienda.ancho2<Tienda.ancho3 && Tienda.ancho2<Tienda.ancho4) {return Tienda.ancho2;}
+		else if(Tienda.ancho3<Tienda.ancho0 && Tienda.ancho3<Tienda.ancho1 && 
+		Tienda.ancho3<Tienda.ancho2 && Tienda.ancho3<Tienda.ancho4) {return Tienda.ancho3;}
+		else {return Tienda.ancho4;}
+	}
+	double AnchoMayor() {
+		if(Tienda.ancho0>Tienda.ancho1 && Tienda.ancho0>Tienda.ancho2 && 
+		Tienda.ancho0>Tienda.ancho3 && Tienda.ancho0>Tienda.ancho4) {return Tienda.ancho0;}
+		else if(Tienda.ancho1>Tienda.ancho0 && Tienda.ancho1>Tienda.ancho2 && 
+		Tienda.ancho1>Tienda.ancho3 && Tienda.ancho1>Tienda.ancho4) {return Tienda.ancho1;}
+		else if(Tienda.ancho2>Tienda.ancho0 && Tienda.ancho2>Tienda.ancho1 && 
+		Tienda.ancho2>Tienda.ancho3 && Tienda.ancho2>Tienda.ancho4) {return Tienda.ancho2;}
+		else if(Tienda.ancho3>Tienda.ancho0 && Tienda.ancho3>Tienda.ancho1 && 
+		Tienda.ancho3>Tienda.ancho2 && Tienda.ancho3>Tienda.ancho4) {return Tienda.ancho3;}
+		else {return Tienda.ancho4;}
+	}
+	double FondoMenor() {
+		if(Tienda.fondo0<Tienda.fondo1 && Tienda.fondo0<Tienda.fondo2 && 
+		Tienda.fondo0<Tienda.fondo3 && Tienda.fondo0<Tienda.fondo4) {return Tienda.fondo0;}
+		else if(Tienda.fondo1<Tienda.fondo0 && Tienda.fondo1<Tienda.fondo2 && 
+		Tienda.fondo1<Tienda.fondo3 && Tienda.fondo1<Tienda.fondo4) {return Tienda.fondo1;}
+		else if(Tienda.fondo2<Tienda.fondo0 && Tienda.fondo2<Tienda.fondo1 && 
+		Tienda.fondo2<Tienda.fondo3 && Tienda.fondo2<Tienda.fondo4) {return Tienda.fondo2;}
+		else if(Tienda.fondo3<Tienda.fondo0 && Tienda.fondo3<Tienda.fondo1 && 
+		Tienda.fondo3<Tienda.fondo2 && Tienda.fondo3<Tienda.fondo4) {return Tienda.fondo3;}
+		else {return Tienda.fondo4;}
+	}
+	double FondoMayor() {
+		if(Tienda.fondo0>Tienda.fondo1 && Tienda.fondo0>Tienda.fondo2 && 
+		Tienda.fondo0>Tienda.fondo3 && Tienda.fondo0>Tienda.fondo4) {return Tienda.fondo0;}
+		else if(Tienda.fondo1>Tienda.fondo0 && Tienda.fondo1>Tienda.fondo2 && 
+		Tienda.fondo1>Tienda.fondo3 && Tienda.fondo1>Tienda.fondo4) {return Tienda.fondo1;}
+		else if(Tienda.fondo2>Tienda.fondo0 && Tienda.fondo2>Tienda.fondo1 && 
+		Tienda.fondo2>Tienda.fondo3 && Tienda.fondo2>Tienda.fondo4) {return Tienda.fondo2;}
+		else if(Tienda.fondo3>Tienda.fondo0 && Tienda.fondo3>Tienda.fondo1 && 
+		Tienda.fondo3>Tienda.fondo2 && Tienda.fondo3>Tienda.fondo4) {return Tienda.fondo3;}
+		else {return Tienda.fondo4;}
+	}
+	double AltoMenor() {
+		if(Tienda.alto0<Tienda.alto1 && Tienda.alto0<Tienda.alto2 && 
+		Tienda.alto0<Tienda.alto3 && Tienda.alto0<Tienda.alto4) {return Tienda.alto0;}
+		else if(Tienda.alto1<Tienda.alto0 && Tienda.alto1<Tienda.alto2 && 
+		Tienda.alto1<Tienda.alto3 && Tienda.alto1<Tienda.alto4) {return Tienda.alto1;}
+		else if(Tienda.alto2<Tienda.alto0 && Tienda.alto2<Tienda.alto1 && 
+		Tienda.alto2<Tienda.alto3 && Tienda.alto0<Tienda.alto4) {return Tienda.alto2;}
+		else if(Tienda.alto3<Tienda.alto0 && Tienda.alto3<Tienda.alto1 && 
+		Tienda.alto3<Tienda.alto2 && Tienda.alto3<Tienda.alto4) {return Tienda.alto3;}
+		else {return Tienda.alto4;}	
+	}
+	double AltoMayor() {
+		if(Tienda.alto0>Tienda.alto1 && Tienda.alto0>Tienda.alto2 && 
+		Tienda.alto0>Tienda.alto3 && Tienda.alto0>Tienda.alto4) {return Tienda.alto0;}
+		else if(Tienda.alto1>Tienda.alto0 && Tienda.alto1>Tienda.alto2 && 
+		Tienda.alto1>Tienda.alto3 && Tienda.alto1>Tienda.alto4) {return Tienda.alto1;}
+		else if(Tienda.alto2>Tienda.alto0 && Tienda.alto2>Tienda.alto1 && 
+		Tienda.alto2>Tienda.alto3 && Tienda.alto0>Tienda.alto4) {return Tienda.alto2;}
+		else if(Tienda.alto3>Tienda.alto0 && Tienda.alto3>Tienda.alto1 && 
+		Tienda.alto3>Tienda.alto2 && Tienda.alto3>Tienda.alto4) {return Tienda.alto3;}
+		else {return Tienda.alto4;}	
+	}
+	double CapacidadMenor() {
+		if(Tienda.capacidad0<Tienda.capacidad1 && Tienda.capacidad0<Tienda.capacidad2 && 
+		Tienda.capacidad0<Tienda.capacidad3 && Tienda.capacidad0<Tienda.capacidad4) {return Tienda.capacidad0;}
+		else if(Tienda.capacidad1<Tienda.capacidad0 && Tienda.capacidad1<Tienda.capacidad2 && 
+		Tienda.capacidad1<Tienda.capacidad3 && Tienda.capacidad1<Tienda.capacidad4) {return Tienda.capacidad1;}
+		else if(Tienda.capacidad2<Tienda.capacidad0 && Tienda.capacidad2<Tienda.capacidad1 && 
+		Tienda.capacidad2<Tienda.capacidad3 && Tienda.capacidad0<Tienda.capacidad4) {return Tienda.capacidad2;}
+		else if(Tienda.capacidad3<Tienda.capacidad0 && Tienda.capacidad3<Tienda.capacidad1 && 
+		Tienda.capacidad3<Tienda.capacidad2 && Tienda.capacidad0<Tienda.capacidad4) {return Tienda.capacidad3;}
+		else {return Tienda.capacidad4;}	
+	}
+	double CapacidadMayor() {
+		if(Tienda.capacidad0>Tienda.capacidad1 && Tienda.capacidad0>Tienda.capacidad2 && 
+		Tienda.capacidad0>Tienda.capacidad3 && Tienda.capacidad0>Tienda.capacidad4) {return Tienda.capacidad0;}
+		else if(Tienda.capacidad1>Tienda.capacidad0 && Tienda.capacidad1>Tienda.capacidad2 && 
+		Tienda.capacidad1>Tienda.capacidad3 && Tienda.capacidad1>Tienda.capacidad4) {return Tienda.capacidad1;}
+		else if(Tienda.capacidad2>Tienda.capacidad0 && Tienda.capacidad2>Tienda.capacidad1 && 
+		Tienda.capacidad2>Tienda.capacidad3 && Tienda.capacidad0>Tienda.capacidad4) {return Tienda.capacidad2;}
+		else if(Tienda.capacidad3>Tienda.capacidad0 && Tienda.capacidad3>Tienda.capacidad1 && 
+		Tienda.capacidad3>Tienda.capacidad2 && Tienda.capacidad0>Tienda.capacidad4) {return Tienda.capacidad3;}
+		else {return Tienda.capacidad4;}	
+	}
+	
+	
+}

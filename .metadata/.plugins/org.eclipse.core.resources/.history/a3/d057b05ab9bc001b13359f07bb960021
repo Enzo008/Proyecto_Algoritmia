@@ -1,0 +1,301 @@
+package cibertec;
+import javax.swing.JOptionPane;
+import java.awt.BorderLayout;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.UIManager;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Font;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+
+public class DialogoVender extends JDialog implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final JPanel contentPanel = new JPanel();
+	private JButton btnCerrar;
+	private JLabel lblModelo;
+	private JComboBox<String> cboCodigo;
+	private JLabel lblPrecio;
+
+	private JButton btnVender;
+	private JScrollPane scrollPane;
+	private JTextArea txtS;
+	private JTextField txtCantidad;
+	private JTextField txtPrecio;
+
+
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Throwable e) {
+			e.printStackTrace();
+		}
+		try {
+			DialogoVender dialog = new DialogoVender();
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create the dialog.
+	 * @return 
+	 */
+	
+	public DialogoVender() {
+		setModal(true);
+		setAutoRequestFocus(false);
+		setTitle("Vender");
+		setResizable(false);
+		setBounds(100, 100, 509, 358);
+		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(null);
+
+		lblModelo = new JLabel("Modelo");
+		lblModelo.setBounds(10, 11, 56, 19);
+		lblModelo.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		contentPanel.add(lblModelo);
+		
+		txtPrecio = new JTextField();
+		txtPrecio.setBounds(100, 38, 242, 20);
+		txtPrecio.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		contentPanel.add(txtPrecio);
+		txtPrecio.setEditable(false);
+		txtPrecio.setColumns(10);
+		
+		txtCantidad = new JTextField();
+		txtCantidad.setBounds(100, 65, 242, 20);
+		txtCantidad.setColumns(10);
+		txtCantidad.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		contentPanel.add(txtCantidad);
+		
+		cboCodigo = new JComboBox<String>();
+		cboCodigo.setBounds(100, 12, 242, 20);
+		cboCodigo.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		cboCodigo.addActionListener(this);
+		cboCodigo.setModel(new DefaultComboBoxModel<String>(new String[] {"WHIRLPOOL WWI16BSBLA", "SAMSUNG WA17T6260BW", "MABE LMA72200WDBB1","WINIA WLA-195ECG","LG TS1604NW"}));
+		contentPanel.add(cboCodigo);
+
+		btnCerrar = new JButton("Cerrar");
+		btnCerrar.setBounds(398, 41, 89, 23);
+		btnCerrar.addActionListener(this);
+		contentPanel.add(btnCerrar);
+		
+		lblPrecio = new JLabel("Precio (S/.)");
+		lblPrecio.setBounds(10, 41, 81, 19);
+		lblPrecio.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		contentPanel.add(lblPrecio);
+		
+		
+		
+		JLabel lblCantidad = new JLabel("Cantidad");
+		lblCantidad.setBounds(10, 66, 81, 19);
+		lblCantidad.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		contentPanel.add(lblCantidad);
+		
+		btnVender = new JButton("Vender");
+		btnVender.setBounds(398, 11, 89, 23);
+		btnVender.addActionListener(this);
+		contentPanel.add(btnVender);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 96, 477, 213);
+		contentPanel.add(scrollPane);
+		
+		txtS = new JTextArea();
+		txtS.setEditable(false);
+		scrollPane.setViewportView(txtS);
+		
+		txtPrecio.setText(""+Tienda.precio0);
+		
+	}
+
+	public void actionPerformed(ActionEvent e) {
+	
+		if (e.getSource() == cboCodigo) {
+			actionPerformedCboCodigo(e);
+		}
+		if (e.getSource() == btnCerrar) {
+			actionPerformedBtnCerrar(e);
+		}
+		if (e.getSource() == btnVender) {
+			actionPerformedBtnVender(e);
+		}
+	
+	}
+
+	protected void actionPerformedBtnCerrar(ActionEvent e) {
+		dispose();
+	}
+	
+	protected void actionPerformedCboCodigo(ActionEvent e) {
+		txtCantidad.requestFocus();
+		int cod=cboCodigo.getSelectedIndex();
+		setPrecio(cod);
+	}
+	void setPrecio(int cod) {
+		switch(cod) {
+		case 0:
+			txtPrecio.setText(""+Tienda.precio0);
+			break;
+		case 1:
+			txtPrecio.setText(""+Tienda.precio1);
+			break;
+		case 2:
+			txtPrecio.setText(""+Tienda.precio2);
+			break;
+		case 3:
+			txtPrecio.setText(""+Tienda.precio3);
+			break;
+		default: 
+			txtPrecio.setText(""+Tienda.precio4);
+		}
+	}
+	
+	//Acumulador de ventas
+	public static int acumVentas0=0;
+	public static int acumVentas1=0;
+	public static int acumVentas2=0;
+	public static int acumVentas3=0;
+	public static int acumVentas4=0;
+	//Acumulador de cantidades
+	public static int acumCant0=0;
+	public static int acumCant1=0;
+	public static int acumCant2=0;
+	public static int acumCant3=0;
+	public static int acumCant4=0;
+	//Acumulador de Importe
+	public static double acumIpag0=0;
+	public static double acumIpag1=0;
+	public static double acumIpag2=0;
+	public static double acumIpag3=0;
+	public static double acumIpag4=0;
+	
+	double acumAlerta=0.0;
+	int acumVentas=0;
+	public void actionPerformedBtnVender(ActionEvent e) {
+		txtCantidad.requestFocus();
+		//Variables
+		acumVentas++;
+		String model,obs;
+		int cod=cboCodigo.getSelectedIndex();
+		int cant=Integer.parseInt(txtCantidad.getText());
+		double prec,icom,ides,ipag;	
+		prec=getPrecio(cod);
+		model=getModelo(cod);
+		acumuladorVentaModelo(cod);
+		acumuladorCantidadModelo(cod, cant);
+		icom=calculoImporteCompra(prec, cant);
+		ides=calculoImporteDescuento(cant, icom);
+		ipag=calculoImportePaga(icom, ides);
+		obs=getObsequio(cant);
+		mostrarDatos(model, prec, cant, icom, ides, ipag, obs);
+		acumuladorImporteModelo(prec, ipag);
+		alertaVentas(ipag);
+		txtCantidad.setText("");
+	}
+	//Metodos
+	double getPrecio(int cod) {
+		switch(cod) {
+		case 0:return Tienda.precio0;
+		case 1:return Tienda.precio1;
+		case 2:return Tienda.precio2;
+		case 3:return Tienda.precio3;
+		default:return Tienda.precio4;
+		}
+	}
+	String getModelo(int cod) {
+		switch(cod) {
+		case 0:return Tienda.modelo0;
+		case 1:return Tienda.modelo1;
+		case 2:return Tienda.modelo2;
+		case 3:return Tienda.modelo3;
+		default:return Tienda.modelo4;
+		}
+	}
+	int acumuladorVentaModelo(int cod){
+		switch(cod) {
+		case 0:return acumVentas0++;
+		case 1:return acumVentas1++;
+		case 2:return acumVentas2++;
+		case 3:return acumVentas3++;
+		default:return acumVentas4++;
+		}
+	}
+	int acumuladorCantidadModelo(int cod,int can) {
+		switch(cod) {
+		case 0:return acumCant0+=can;
+		case 1:return acumCant1+=can;
+		case 2:return acumCant2+=can;
+		case 3:return acumCant3+=can;
+		default:return acumCant4+=can;
+		}
+	}
+	double calculoImporteCompra(double precio,int cantidad) {
+		return precio*cantidad;
+	}	
+	double calculoImporteDescuento(int cant,double icom) {
+		if(cant>=15) {return icom*(Tienda.porcentaje1/100);}
+		else if(cant>=11) {return icom*(Tienda.porcentaje2/100);}
+		else if(cant>=6) {return icom*(Tienda.porcentaje3/100);}
+		else {return icom*(Tienda.porcentaje4/100);}
+	}
+	double calculoImportePaga(double icom,double ides) {
+		return icom-ides;
+	}
+	String getObsequio(int cant) {
+		if(cant>=5) {return Tienda.obsequio1;}
+		else if(cant>=2){return Tienda.obsequio2;}
+		else {return Tienda.obsequio3;}
+	}
+	void mostrarDatos(String model,double prec,int cant,double icom,double ides,double ipag,String obs) {
+		txtS.setText("BOLETA DE VENTA:\n\n");
+		imprimir("Modelo            : "+model);
+		imprimir("Precio            : S/. "+prec);
+		imprimir("Cantidad          : "+cant);
+		imprimir("Importe Compra    : S/. "+icom);
+		imprimir("Importe Descuento : S/. "+ides);
+		imprimir("Importe Pagar     : S/. "+ipag);
+		imprimir("Obsequio          : "+obs);
+	}
+	double acumuladorImporteModelo(double prec,double ipag) {
+		if(prec==Tienda.precio0) {return acumIpag0+=ipag;}
+		else if(prec==Tienda.precio1) {return acumIpag1+=ipag;}
+		else if(prec==Tienda.precio2) {return acumIpag2+=ipag;}
+		else if(prec==Tienda.precio3) {return acumIpag3+=ipag;}
+		else {return acumIpag4+=ipag;}
+	}
+	void alertaVentas(double ipag) {
+		acumAlerta+=ipag;
+		if(acumVentas%5==0) {
+			JOptionPane.showMessageDialog(null,"Venta Nro. "+acumVentas+"\n"+"Importe total general acumulado: "
+					+ "S/."+acumAlerta+ "\nPorcentaje de la cuota diaria: "+((acumAlerta/30000)*100)+"%");		
+		}
+	}
+	
+	void imprimir(String cad) {
+		txtS.append(cad + "\n");
+	}
+}
